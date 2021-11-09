@@ -16,6 +16,7 @@ async function run() {
         await client.connect();
         const database = client.db('doctorDB');
         const appoinmentsCollection = database.collection('appointments');
+        const usersCollection = database.collection('users');
 
         //search booking by email
         app.get('/appointment', async (req, res) => {
@@ -23,9 +24,9 @@ async function run() {
             const date = new Date(req.query.date).toLocaleDateString();
             console.log(date);
             const query = { email: email, date: date };
+            console.log(query);
             const cursor = appoinmentsCollection.find(query);
             const result = await cursor.toArray();
-            // console.log(result);
             res.json(result)
         })
         //search by all booking
@@ -33,19 +34,36 @@ async function run() {
         app.get('/appointments', async (req, res) => {
             const cursor = appoinmentsCollection.find({});
             const result = await cursor.toArray();
-            console.log(result);
             res.json(result);
-
-
         })
 
         //insert appoinments to doctorDB
         app.post('/appointments', async (req, res) => {
             const appoinment = req.body;
             const result = await appoinmentsCollection.insertOne(appoinment);
-            console.log(appoinment);
             res.json(result);
 
+        })
+
+
+        //save user info
+        app.post('/user', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+
+        })
+
+        //update user info
+        app.put('/user', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
         })
     }
     finally {
