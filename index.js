@@ -17,8 +17,34 @@ async function run() {
         const database = client.db('doctorDB');
         const appoinmentsCollection = database.collection('appointments');
 
+        //search booking by email
+        app.get('/appointment', async (req, res) => {
+            const email = req.query.email;
+            const date = new Date(req.query.date).toLocaleDateString();
+            console.log(date);
+            const query = { email: email, date: date };
+            const cursor = appoinmentsCollection.find(query);
+            const result = await cursor.toArray();
+            // console.log(result);
+            res.json(result)
+        })
+        //search by all booking
+
+        app.get('/appointments', async (req, res) => {
+            const cursor = appoinmentsCollection.find({});
+            const result = await cursor.toArray();
+            console.log(result);
+            res.json(result);
+
+
+        })
+
         //insert appoinments to doctorDB
         app.post('/appointments', async (req, res) => {
+            const appoinment = req.body;
+            const result = await appoinmentsCollection.insertOne(appoinment);
+            console.log(appoinment);
+            res.json(result);
 
         })
     }
