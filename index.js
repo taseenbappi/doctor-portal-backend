@@ -13,7 +13,7 @@ app.use(express.json());
 
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./doctors-portal-adminsdk.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_ACCOUNT_SERVICE);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
