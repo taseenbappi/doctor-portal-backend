@@ -48,7 +48,7 @@ async function run() {
         //search booking by email
         app.get('/appointment', async (req, res) => {
             const email = req.query.email;
-            const date = new Date(req.query.date).toLocaleDateString();
+            const date = req.query.date;
             console.log(date);
             const query = { email: email, date: date };
             console.log(query);
